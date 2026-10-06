@@ -69,7 +69,7 @@ def monitor_game():
                     else:
                         low_streak = 0
 
-                    if low_streak >= 7:
+                    if low_streak >= 1:
                         msg = f"⚠️ **ALERTE LUCKY JET** ⚠️\n\n7 tours consecutifs sous 1.50x détectés !\nDerniere cote: {multiplier}x\nPréparer une stratégie."
                         send_telegram_alert(msg)
                         low_streak = 0
