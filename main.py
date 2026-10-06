@@ -3,6 +3,8 @@ import time
 import websocket
 from telegram import Bot
 import asyncio
+from http.server import HTTPServer, BaseHTTPRequestHandler
+import threading
 
 # --- CONFIGURATION ---
 TELEGRAM_TOKEN = "8677913643:AAED_SKn1qdXyi1YtbIBLGN9YhqmIzDFJxE"
@@ -11,6 +13,17 @@ WEBSOCKET_URL = "wss://lucky-jet-api-or-stream-url.com/connect"
 
 streak_under_1_5 = 0
 bot = Bot(token=TELEGRAM_TOKEN)
+
+# Serveur Web pour éviter que Render ne coupe le service gratuit
+class HealthCheckHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"Bot Lucky Jet actif !")
+
+def run_http_server():
+    server = HTTPServer(('0.0.0.0', 10000), HealthCheckHandler)
+    server.serve_forever()
 
 def send_telegram_alert(count):
     message = (
@@ -56,4 +69,6 @@ def run_websocket():
     ws.run_forever()
 
 if __name__ == "__main__":
+    threading.Thread(target=run_http_server, daemon=True).start()
     run_websocket()
+                               
